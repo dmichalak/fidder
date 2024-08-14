@@ -36,8 +36,6 @@ def predict_fiducial_mask(
         default=None, help="File containing segmentation model checkpoint."
     ),
 ):
-    # "high" = float32 matrix multiplications use the TensorFloat32 or bfloat16_3x datatypes
-    torch.set_float32_matmul_precision('high')
     """Predict a fiducial mask using a pretrained model."""
     images = torch.tensor(mrcfile.read(input_image)).float()
     images, ps = einops.pack([images], pattern='* h w')

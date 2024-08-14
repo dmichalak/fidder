@@ -2,6 +2,7 @@ from pathlib import Path
 
 import typer
 from pytorch_lightning import Trainer
+import torch
 
 from fidder._cli import OPTION_PROMPT_KWARGS, cli
 from .data import FidderDataModule
@@ -16,12 +17,15 @@ def train_fidder(
     gradient_steps: int = 600,
     learning_rate: float = 1e-5,
 ) -> None:
+
+    torch.set_float32_matmul_precision('highest')
+
     """Train a semantic segmentation model for fiducial detection."""
     model = Fidder(batch_size=batch_size, learning_rate=learning_rate)
     data_module = FidderDataModule(dataset_directory)
 
     trainer = Trainer(
-        accelerator="auto",
+        accelerator="gpu",
         devices="auto",
         default_root_dir=output_directory,
         max_steps=gradient_steps,
